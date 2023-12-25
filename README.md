@@ -16,7 +16,7 @@ This Chai plugin extends Chai's assertion capabilities to allow for seamless rec
 
 It enables you to write concise and expressive tests for nested structures, ensuring the integrity of your data at every level.
 
-- **👯‍♀️ Recursive equality**: Assert that two objects or arrays are recursively equal, taking into account nested values and their types.
+- **🔎 Recursive equality**: Assert that two objects or arrays are recursively equal, taking into account nested values and their types.
 - **📦 Recursive inclusion**: Verify that a nested value is present within an object or array, even if it's located deep within the structure.
 - **🔧 Customizable matchers**: Use matchers from Chai's rich library to define specific conditions for nested values, such as type checks, string patterns, or numerical ranges.
 - **ℹ️ Informative error messages**: Receive clear and detailed error messages when assertions fail, pinpointing the exact path of the discrepancy within the nested structure.
