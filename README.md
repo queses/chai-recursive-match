@@ -44,8 +44,8 @@ use(chaiRecursive);
 #### A simple example:
 
 ```ts
-expect({ foo: { bar: 'baz' } }).to.be.recursively.equal({
-  foo: to => to.be.recursively.equal({ bar: to => to.be.a('string') }),
+expect({ foo: { bar: 'baz' } }).to.recursive.equal({
+  foo: to => to.recursive.equal({ bar: to => to.be.a('string') }),
 });
 ```
 
@@ -74,7 +74,7 @@ expect({
   empty2: undefined,
   date1: new Date(0),
   method1() {},
-}).to.equal({
+}).to.recursive.equal({
   num1: 1,
   num2: to => to.be.gt(1),
   arr1: [1, 2, 3],
@@ -92,8 +92,8 @@ expect({
 #### Negation:
 
 ```ts
-expect({ foo: { bar: 'baz' } }).to.not.be.recursively.equal({
-  foo: to => to.be.recursively.equal({ bar: to => to.be.a('number') }),
+expect({ foo: { bar: 'baz' } }).to.not.recursively.equal({
+  foo: to => to.recursively.equal({ bar: to => to.be.a('number') }),
 });
 ```
 
@@ -102,7 +102,7 @@ expect({ foo: { bar: 'baz' } }).to.not.be.recursively.equal({
 #### An object example:
 
 ```ts
-expect({ foo: { bar: 'baz' }, num: 123 }).to.be.recursively.include({
+expect({ foo: { bar: 'baz' }, num: 123 }).to.recursive.include({
   num: to => to.be.gt(100),
 });
 ```

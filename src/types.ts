@@ -4,7 +4,12 @@ declare global {
     interface Assertion {
       recursive: {
         equal(pattern: ChaiMathPattern): Assertion;
+        equals(pattern: ChaiMathPattern): Assertion;
+        eq(pattern: ChaiMathPattern): Assertion;
+        eql(pattern: ChaiMathPattern): Assertion;
+        eqls(pattern: ChaiMathPattern): Assertion;
         include(pattern: ChaiMathPattern): Assertion;
+        includes(pattern: ChaiMathPattern): Assertion;
       };
     }
   }

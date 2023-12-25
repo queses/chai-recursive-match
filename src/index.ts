@@ -4,7 +4,7 @@ import { ChaiMathPattern, ChaiMathSinglePattern } from './types';
 export { ChaiMathPattern, ChaiMathFn } from './types';
 
 export const chaiRecursive: Chai.ChaiPlugin = (chai, utils) => {
-  const check = (
+  const checkObject = (
     obj: Record<string, unknown>,
     pattern: ChaiMathSinglePattern,
     path: string,
@@ -47,7 +47,7 @@ export const chaiRecursive: Chai.ChaiPlugin = (chai, utils) => {
     return null;
   };
 
-  function matchObject(this: Chai.AssertionStatic, pattern: ChaiMathPattern, partial: boolean) {
+  function match(this: Chai.AssertionStatic, pattern: ChaiMathPattern, partial: boolean) {
     const obj: Record<string, unknown> = util.flag(this, 'object');
     const negate: boolean = util.flag(this, 'negate') || false;
     const operation = partial ? 'include' : 'equal';
@@ -66,7 +66,7 @@ export const chaiRecursive: Chai.ChaiPlugin = (chai, utils) => {
       expect(pattern, patternMsg).to.be.an('object');
       const matchIx = objs.findIndex((obj, i) => {
         const path = `${basePath}[${i}]`;
-        const err = check(obj, pattern as ChaiMathSinglePattern, path, baseMsg, partial);
+        const err = checkObject(obj, pattern as ChaiMathSinglePattern, path, baseMsg, partial);
         return !err;
       });
 
@@ -85,7 +85,7 @@ export const chaiRecursive: Chai.ChaiPlugin = (chai, utils) => {
       expect(obj).to.have.length(patterns.length);
 
       const err = objs.find((obj, i) => {
-        return check(obj, patterns[i], `${basePath}[${i}]`, baseMsg, partial);
+        return checkObject(obj, patterns[i], `${basePath}[${i}]`, baseMsg, partial);
       });
 
       if (err && !negate) {
@@ -101,7 +101,7 @@ export const chaiRecursive: Chai.ChaiPlugin = (chai, utils) => {
     expect(obj, objMsg).to.be.an('object');
     expect(pattern, patternMsg).to.be.an('object');
 
-    const err = check(obj, pattern as ChaiMathSinglePattern, basePath, baseMsg, partial);
+    const err = checkObject(obj, pattern as ChaiMathSinglePattern, basePath, baseMsg, partial);
 
     if (err && !negate) {
       throw err;
@@ -112,13 +112,16 @@ export const chaiRecursive: Chai.ChaiPlugin = (chai, utils) => {
   }
 
   chai.Assertion.addProperty('recursive', function () {
-    const fullMatch = (pattern: ChaiMathPattern) => matchObject.call(this, pattern, false);
-    const partialMath = (pattern: ChaiMathPattern) => matchObject.call(this, pattern, true);
+    const fullMatch = (pattern: ChaiMathPattern) => match.call(this, pattern, false);
+    const partialMath = (pattern: ChaiMathPattern) => match.call(this, pattern, true);
 
     return {
       equal: fullMatch,
-      include: partialMath,
       equals: fullMatch,
+      eq: fullMatch,
+      eql: fullMatch,
+      eqls: fullMatch,
+      include: partialMath,
       includes: partialMath,
     };
   });
