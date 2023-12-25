@@ -95,8 +95,16 @@ expect({
 #### Negation:
 
 ```ts
-expect({ foo: { bar: 'baz' } }).to.not.recursively.equal({
-  foo: to => to.recursively.equal({ bar: to => to.be.a('number') }),
+expect({ foo: { bar: 'baz' } }).to.not.recursive.equal({
+  foo: to => to.recursive.equal({ bar: to => to.be.a('number') }),
+});
+```
+
+#### Shorter syntax:
+
+```ts
+expect({ foo: { bar: 'baz' } }).to.rec.eq({
+  foo: to => to.rec.eq({ bar: to => to.be.a('string') }),
 });
 ```
 
