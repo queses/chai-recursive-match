@@ -2,10 +2,7 @@
 
 [![npm package][npm-img]][npm-url]
 [![Build Status][build-img]][build-url]
-[![Downloads][downloads-img]][downloads-url]
 [![Issues][issues-img]][issues-url]
-[![Code Coverage][codecov-img]][codecov-url]
-[![Commitizen Friendly][commitizen-img]][commitizen-url]
 [![Semantic Release][semantic-release-img]][semantic-release-url]
 
 > Easily perform recursive comparisons in your Chai assertions
@@ -128,20 +125,18 @@ expect([{ foo: { bar: 'baz' } }, { foo: { bar: 'foobar' } }]).to.not.recursive.i
 
 ## TBD
 
-- 🚧 Support chai.assert\*\* interface
+- 🚧 Support chai.asser interface
 - 🚧 Support more array methods (e.g. `to.recursive.have.members`)
 
-[build-img]: https://github.com/ryansonshine/typescript-npm-package-template/actions/workflows/release.yml/badge.svg
-[build-url]: https://github.com/ryansonshine/typescript-npm-package-template/actions/workflows/release.yml
-[downloads-img]: https://img.shields.io/npm/dt/typescript-npm-package-template
-[downloads-url]: https://www.npmtrends.com/typescript-npm-package-template
-[npm-img]: https://img.shields.io/npm/v/typescript-npm-package-template
-[npm-url]: https://www.npmjs.com/package/typescript-npm-package-template
-[issues-img]: https://img.shields.io/github/issues/ryansonshine/typescript-npm-package-template
-[issues-url]: https://github.com/ryansonshine/typescript-npm-package-template/issues
-[codecov-img]: https://codecov.io/gh/ryansonshine/typescript-npm-package-template/branch/main/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/ryansonshine/typescript-npm-package-template
+[build-img]: https://github.com/queses/chai-recursive-match/actions/workflows/release.yml/badge.svg
+[build-url]: https://github.com/queses/chai-recursive-match/actions/workflows/release.yml
+[downloads-img]: https://img.shields.io/npm/dt/chai-recursive-match
+[downloads-url]: https://www.npmtrends.com/chai-recursive-match
+[npm-img]: https://img.shields.io/npm/v/chai-recursive-match
+[npm-url]: https://www.npmjs.com/package/chai-recursive-match
+[issues-img]: https://img.shields.io/github/issues/queses/chai-recursive-match
+[issues-url]: https://github.com/queses/chai-recursive-match/issues
+[codecov-img]: https://codecov.io/gh/queses/chai-recursive-match/branch/main/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/queses/chai-recursive-match
 [semantic-release-img]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
 [semantic-release-url]: https://github.com/semantic-release/semantic-release
-[commitizen-img]: https://img.shields.io/badge/commitizen-friendly-brightgreen.svg
-[commitizen-url]: http://commitizen.github.io/cz-cli/

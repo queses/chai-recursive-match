@@ -1,6 +1,6 @@
 {
   "name": "chai-recursive-match",
-  "version": "0.0.0-development",
+  "version": "1.0.1",
   "description": "A chai plugin that adds recursive deep equality assertions",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
