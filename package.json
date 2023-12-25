@@ -1,5 +1,5 @@
 {
-  "name": "chai-plugin-recursive",
+  "name": "chai-recursive-match",
   "version": "0.0.0-development",
   "description": "A chai plugin that adds recursive deep equality assertions",
   "main": "./dist/index.js",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/queses/chai-plugin-recursive.git"
+    "url": "git+https://github.com/queses/chai-recursive-match.git"
   },
   "license": "MIT",
   "author": {
@@ -38,9 +38,9 @@
     "test"
   ],
   "bugs": {
-    "url": "https://github.com/ryansonshine/chai-plugin-recursive/issues"
+    "url": "https://github.com/ryansonshine/chai-recursive-match/issues"
   },
-  "homepage": "https://github.com/ryansonshine/chai-plugin-recursive#readme",
+  "homepage": "https://github.com/ryansonshine/chai-recursive-match#readme",
   "devDependencies": {
     "@ryansonshine/commitizen": "^4.2.8",
     "@ryansonshine/cz-conventional-changelog": "^3.3.4",
