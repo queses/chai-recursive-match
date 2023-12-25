@@ -91,6 +91,12 @@ describe('chai recursive', () => {
         .to.throw()
         .recursive.include({ message: to => to.contain('my text (at root.obj2.value):') });
     });
+
+    it('should succeed with a short alias', () => {
+      expect({ obj1: value.obj1 }).to.rec.eq({
+        obj1: to => to.rec.eq({ key: 'a', value: to => to.be.a('string') }),
+      });
+    });
   });
 
   describe('on an array', () => {

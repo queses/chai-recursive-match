@@ -41,6 +41,9 @@ use(chaiRecursive);
 
 ### Recursively equality
 
+An object or an array is checked against a pattern.
+See [`types.ts`](https://github.com/queses/chai-recursive-match/blob/main/src/types.ts) for pattern's type definition.
+
 #### A simple example:
 
 ```ts

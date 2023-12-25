@@ -111,7 +111,7 @@ export const chaiRecursive: Chai.ChaiPlugin = (chai, utils) => {
     }
   }
 
-  chai.Assertion.addProperty('recursive', function () {
+  function recursive(this: Chai.AssertionStatic) {
     const fullMatch = (pattern: ChaiMathPattern) => match.call(this, pattern, false);
     const partialMath = (pattern: ChaiMathPattern) => match.call(this, pattern, true);
 
@@ -124,5 +124,8 @@ export const chaiRecursive: Chai.ChaiPlugin = (chai, utils) => {
       include: partialMath,
       includes: partialMath,
     };
-  });
+  }
+
+  chai.Assertion.addProperty('recursive', recursive);
+  chai.Assertion.addProperty('rec', recursive);
 };

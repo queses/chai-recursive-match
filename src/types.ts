@@ -1,16 +1,19 @@
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Chai {
+    interface Recursive {
+      equal(pattern: ChaiMathPattern): Assertion;
+      equals(pattern: ChaiMathPattern): Assertion;
+      eq(pattern: ChaiMathPattern): Assertion;
+      eql(pattern: ChaiMathPattern): Assertion;
+      eqls(pattern: ChaiMathPattern): Assertion;
+      include(pattern: ChaiMathPattern): Assertion;
+      includes(pattern: ChaiMathPattern): Assertion;
+    }
+
     interface Assertion {
-      recursive: {
-        equal(pattern: ChaiMathPattern): Assertion;
-        equals(pattern: ChaiMathPattern): Assertion;
-        eq(pattern: ChaiMathPattern): Assertion;
-        eql(pattern: ChaiMathPattern): Assertion;
-        eqls(pattern: ChaiMathPattern): Assertion;
-        include(pattern: ChaiMathPattern): Assertion;
-        includes(pattern: ChaiMathPattern): Assertion;
-      };
+      recursive: Recursive;
+      rec: Recursive;
     }
   }
 }
