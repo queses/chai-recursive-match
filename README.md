@@ -23,7 +23,7 @@ It enables you to write concise and expressive tests for nested structures, ensu
 Give it a try to enhance your testing experience with Chai.
 
 ```bash
-npm install chai-recursive-match
+npm install -D chai-recursive-match
 ```
 
 > **Note:** No need to install types for TypeScript separately – they are included.
@@ -92,6 +92,32 @@ expect({
 });
 ```
 
+#### Check if an array has a member
+
+This is similar to `recursive.include`, but the value is expected to fully match the pattern:
+
+```ts
+expect([
+  { id: 1, name: 'Alice' },
+  { id: 2, name: 'Bob' },
+]).to.recursive.equal({ id: 1, name: to => to.contain('A') });
+```
+
+#### Check if an array has members
+
+This is similar to `recursive.have()` with several members to be compared:
+
+```ts
+expect([
+  { id: 1, name: 'Alice' },
+  { id: 2, name: 'Bob' },
+  { id: 2, name: 'Carol' },
+]).to.recursive.have.members([
+  { id: 1, name: to => to.contain('A') },
+  { id: 3, name: to => to.contain('C') },
+]);
+```
+
 #### Negation:
 
 ```ts
@@ -100,11 +126,11 @@ expect({ foo: { bar: 'baz' } }).to.not.recursive.equal({
 });
 ```
 
-#### Shorter syntax:
+#### Negation:
 
 ```ts
-expect({ foo: { bar: 'baz' } }).to.rec.eq({
-  foo: to => to.rec.eq({ bar: to => to.be.a('string') }),
+expect([{ foo: { bar: 'baz' } }, { foo: { bar: 'foobar' } }]).to.not.recursive.include({
+  foo: to => to.recursive.equal({ bar: to.match(/^baz/) }),
 });
 ```
 
@@ -126,18 +152,20 @@ expect([{ foo: { bar: 'baz' } }, { foo: { bar: 'foobar' } }]).to.recursive.inclu
 });
 ```
 
-#### Negation:
+#### Check if an array includes members
 
 ```ts
-expect([{ foo: { bar: 'baz' } }, { foo: { bar: 'foobar' } }]).to.not.recursive.include({
-  foo: to => to.recursive.equal({ bar: to.match(/^baz/) }),
-});
+expect([
+  { id: 1, name: 'Alice' },
+  { id: 2, name: 'Bob' },
+  { id: 2, name: 'Carol' },
+]).to.recursive.include.members([{ name: to => to.contain('A') }, { name: to => to.contain('C') }]);
 ```
 
 ## TBD
 
-- 🚧 Support chai.asser interface
-- 🚧 Support more array methods (e.g. `to.recursive.have.members`)
+- 🚧 Support `chai.assert` interface
+- 🚧 Support more array methods (e.g. `to.recursive.have.ordered.members`)
 
 [build-img]: https://github.com/queses/chai-recursive-match/actions/workflows/release.yml/badge.svg
 [build-url]: https://github.com/queses/chai-recursive-match/actions/workflows/release.yml

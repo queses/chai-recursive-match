@@ -3,13 +3,45 @@ import { ChaiMathPattern, ChaiMathSinglePattern } from './types';
 
 export { ChaiMathPattern, ChaiMathFn } from './types';
 
+type Operation = 'equal' | 'include' | 'have' | 'includeMembers' | 'haveMembers';
+
 export const chaiRecursive: Chai.ChaiPlugin = (chai, utils) => {
+  const partialOps = new Set(['include', 'includeMembers']);
+  const membersOps = new Set(['includeMembers', 'haveMembers']);
+
+  const getFailureMessage = (
+    prefix: string,
+    obj: Record<string, unknown>,
+    op: Operation,
+    negate: boolean
+  ) => {
+    const expectedTo =
+      `${prefix ? `${prefix}: ` : ''}` +
+      `expected ${utils.inspect(obj, true, 4)} to ` +
+      `${negate ? 'not' : ''}`;
+
+    switch (op) {
+      case 'include':
+        return Array.isArray(obj)
+          ? `${expectedTo} recursive include the pattern`
+          : `${expectedTo} contain a member recursive including the pattern`;
+      case 'have':
+        return `${expectedTo} contain a member that recursive matches the pattern`;
+      case 'includeMembers':
+        return `${expectedTo} contain members recursive including the pattern`;
+      case 'haveMembers':
+        return `${expectedTo} contain members that recursive match the pattern`;
+      default:
+        return `${expectedTo} recursive match the pattern`;
+    }
+  };
+
   const checkObject = (
     obj: Record<string, unknown>,
     pattern: ChaiMathSinglePattern,
+    partial: boolean,
     path: string,
-    baseMsg: string,
-    partial: boolean
+    baseMsg: string
   ): Chai.AssertionError | null => {
     const keys = new Set(Object.keys(pattern).concat(Object.keys(obj)));
 
@@ -34,7 +66,7 @@ export const chaiRecursive: Chai.ChaiPlugin = (chai, utils) => {
           return;
         }
 
-        return expect(val, msg).to.deep.eq(ptn);
+        expect(val, msg).to.deep.eq(ptn);
       });
     } catch (err) {
       if (err instanceof AssertionError) {
@@ -47,10 +79,11 @@ export const chaiRecursive: Chai.ChaiPlugin = (chai, utils) => {
     return null;
   };
 
-  function match(this: Chai.AssertionStatic, pattern: ChaiMathPattern, partial: boolean) {
+  function match(this: Chai.AssertionStatic, pattern: ChaiMathPattern, op: Operation) {
     const obj: Record<string, unknown> = util.flag(this, 'object');
     const negate: boolean = util.flag(this, 'negate') || false;
-    const operation = partial ? 'include' : 'equal';
+    const partial = partialOps.has(op);
+    const onMembers = membersOps.has(op);
 
     const basePath: string = util.flag(this, 'chaiRecursiveBasePath') || 'root';
     const baseMsg: string = util.flag(this, 'chaiRecursiveBaseMsg') ?? util.flag(this, 'message');
@@ -60,69 +93,106 @@ export const chaiRecursive: Chai.ChaiPlugin = (chai, utils) => {
     expect(obj, objMsg).not.to.be.a('null');
     expect(pattern, patternMsg).not.to.be.a('null');
 
-    if (Array.isArray(obj) && partial) {
-      const objs = obj as Record<string, unknown>[];
-
-      expect(pattern, patternMsg).to.be.an('object');
-      const matchIx = objs.findIndex((obj, i) => {
-        const path = `${basePath}[${i}]`;
-        const err = checkObject(obj, pattern as ChaiMathSinglePattern, path, baseMsg, partial);
-        return !err;
-      });
-
-      if (matchIx < 0 && !negate) {
-        expect.fail(`${objMsg}: expected to recursive ${operation} the pattern`);
-      } else if (matchIx >= 0 && negate) {
-        expect.fail(`${objMsg}: expected to not recursive ${operation} the pattern`);
-      }
-
-      return;
-    } else if (Array.isArray(obj)) {
-      const objs = obj as Record<string, unknown>[];
-
+    if (Array.isArray(obj) && op === 'equal') {
       expect(pattern, patternMsg).to.be.an('array');
       const patterns = pattern as ChaiMathSinglePattern[];
-      expect(obj).to.have.length(patterns.length);
+      expect(obj, objMsg).to.have.length(patterns.length);
 
-      const err = objs.find((obj, i) => {
-        return checkObject(obj, patterns[i], `${basePath}[${i}]`, baseMsg, partial);
-      });
+      const err = obj.find((o: Record<string, unknown>, i) =>
+        checkObject(o, patterns[i], false, `${basePath}[${i}]`, baseMsg)
+      );
 
       if (err && !negate) {
         throw err;
       }
       if (negate && !err) {
-        expect.fail(`${objMsg}: expected to not recursive ${operation} the pattern`);
+        expect.fail(getFailureMessage(objMsg, obj, op, negate));
       }
 
-      return;
+      return this;
+    } else if (Array.isArray(obj) && !onMembers) {
+      expect(pattern, patternMsg).to.be.an('object');
+
+      const matchIx = obj.findIndex((o: Record<string, unknown>) => {
+        const err = checkObject(o, pattern as ChaiMathSinglePattern, partial, '', '');
+        return !err;
+      });
+
+      if (matchIx < 0 && !negate) {
+        expect.fail(getFailureMessage(objMsg, obj, op, negate));
+      } else if (matchIx >= 0 && negate) {
+        expect.fail(getFailureMessage(objMsg, obj, op, negate));
+      }
+
+      return this;
+    } else if (Array.isArray(obj)) {
+      expect(pattern, patternMsg).to.be.an('array');
+      const patterns = pattern as ChaiMathSinglePattern[];
+      expect(obj, objMsg).to.have.length.gte(patterns.length);
+
+      const matchedObjIndexes = new Set<number>();
+
+      const failIx = patterns.findIndex(pattern => {
+        const matchIx = obj.findIndex((o: Record<string, unknown>, i) => {
+          if (matchedObjIndexes.has(i)) {
+            return false;
+          }
+
+          const err = checkObject(o, pattern, partial, '', '');
+          return !err;
+        });
+
+        if (matchIx >= 0) {
+          matchedObjIndexes.add(matchIx);
+          return false;
+        }
+
+        return true;
+      });
+
+      if (failIx >= 0 && !negate) {
+        expect.fail(getFailureMessage(objMsg, obj, op, negate));
+      } else if (failIx < 0 && negate) {
+        expect.fail(getFailureMessage(objMsg, obj, op, negate));
+      }
+
+      return this;
     }
 
     expect(obj, objMsg).to.be.an('object');
     expect(pattern, patternMsg).to.be.an('object');
 
-    const err = checkObject(obj, pattern as ChaiMathSinglePattern, basePath, baseMsg, partial);
+    const err = checkObject(obj, pattern as ChaiMathSinglePattern, partial, basePath, baseMsg);
 
     if (err && !negate) {
       throw err;
     }
     if (negate && !err) {
-      expect.fail(`${objMsg}: expected to not recursive ${operation} the pattern`);
+      expect.fail(getFailureMessage(objMsg, obj, op, negate));
     }
+
+    return this;
   }
 
   function recursive(this: Chai.AssertionStatic) {
-    const fullMatch = (pattern: ChaiMathPattern) => match.call(this, pattern, false);
-    const partialMath = (pattern: ChaiMathPattern) => match.call(this, pattern, true);
+    const equal = (pattern: ChaiMathPattern) => match.call(this, pattern, 'equal');
+
+    const include = (pattern: ChaiMathPattern) => match.call(this, pattern, 'include');
+    include['members'] = (pattern: ChaiMathPattern) => match.call(this, pattern, 'includeMembers');
+
+    const have = (pattern: ChaiMathPattern) => match.call(this, pattern, 'have');
+    have['members'] = (pattern: ChaiMathPattern) => match.call(this, pattern, 'haveMembers');
 
     return {
-      equal: fullMatch,
-      equals: fullMatch,
-      eq: fullMatch,
-      eql: fullMatch,
-      eqls: fullMatch,
-      include: partialMath,
-      includes: partialMath,
+      equal,
+      equals: equal,
+      eq: equal,
+      eql: equal,
+      eqls: equal,
+      include,
+      includes: include,
+      have,
+      has: have,
     };
   }
 
