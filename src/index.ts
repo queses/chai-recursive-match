@@ -12,8 +12,8 @@ export const chaiRecursive: Chai.ChaiPlugin = (chai, utils) => {
     const basePath: string = util.flag(this, 'chaiRecursiveBasePath') || 'root';
     const baseMsg: string = util.flag(this, 'chaiRecursiveBaseMsg') ?? util.flag(this, 'message');
 
-    const partial = op === 'include' || op === 'includeMembers';
-    const onMembers = op === 'includeMembers' || op === 'haveMembers';
+    const partialOp = op === 'include' || op === 'includeMembers';
+    const membersOp = op === 'includeMembers' || op === 'haveMembers';
 
     const objMsgPrefix = (baseMsg ? `${baseMsg} ` : '') + `(at ${basePath})`;
     const patternMsgPrefix = (baseMsg ? `${baseMsg} ` : '') + `(pattern at ${basePath})`;
@@ -37,35 +37,26 @@ export const chaiRecursive: Chai.ChaiPlugin = (chai, utils) => {
       }
 
       return this;
-    } else if (Array.isArray(obj) && !onMembers) {
-      expect(pattern, patternMsgPrefix).to.be.an('object');
-
-      const matchIx = obj.findIndex((o: Record<string, unknown>) => {
-        const err = checkObject(o, pattern as ChaiMathSinglePattern, partial, '', '');
-        return !err;
-      });
-
-      if (matchIx < 0 && !negate) {
-        expect.fail(getFailMessage(objMsgPrefix, obj, op, negate));
-      } else if (matchIx >= 0 && negate) {
-        expect.fail(getFailMessage(objMsgPrefix, obj, op, negate));
+    } else if (Array.isArray(obj)) {
+      let patterns: ChaiMathSinglePattern[];
+      if (membersOp) {
+        expect(pattern, patternMsgPrefix).to.be.an('array');
+        patterns = pattern as ChaiMathSinglePattern[];
+      } else {
+        expect(pattern, patternMsgPrefix).to.be.an('object');
+        patterns = [pattern as ChaiMathSinglePattern];
       }
 
-      return this;
-    } else if (Array.isArray(obj)) {
-      expect(pattern, patternMsgPrefix).to.be.an('array');
-      const patterns = pattern as ChaiMathSinglePattern[];
       expect(obj, objMsgPrefix).to.have.length.gte(patterns.length);
 
       const matchedObjIndexes = new Set<number>();
-
       const failIx = patterns.findIndex(pattern => {
         const matchIx = obj.findIndex((o: Record<string, unknown>, i) => {
           if (matchedObjIndexes.has(i)) {
             return false;
           }
 
-          const err = checkObject(o, pattern, partial, '', '');
+          const err = checkObject(o, pattern, partialOp, '', '');
           return !err;
         });
 
@@ -89,7 +80,7 @@ export const chaiRecursive: Chai.ChaiPlugin = (chai, utils) => {
     expect(obj, objMsgPrefix).to.be.an('object');
     expect(pattern, patternMsgPrefix).to.be.an('object');
 
-    const err = checkObject(obj, pattern as ChaiMathSinglePattern, partial, basePath, baseMsg);
+    const err = checkObject(obj, pattern as ChaiMathSinglePattern, partialOp, basePath, baseMsg);
 
     if (err && !negate) {
       throw err;
