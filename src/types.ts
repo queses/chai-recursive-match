@@ -4,16 +4,16 @@ declare global {
     interface RecursiveHave extends RecursiveInclude {}
 
     interface RecursiveInclude {
-      (pattern: ChaiMathPattern): Assertion;
-      members(pattern: ChaiMathPattern): Assertion;
+      (pattern: ChaiRecursivePattern): Assertion;
+      members(pattern: ChaiRecursivePattern): Assertion;
     }
 
     interface Recursive {
-      equal(pattern: ChaiMathPattern): Assertion;
-      equals(pattern: ChaiMathPattern): Assertion;
-      eq(pattern: ChaiMathPattern): Assertion;
-      eql(pattern: ChaiMathPattern): Assertion;
-      eqls(pattern: ChaiMathPattern): Assertion;
+      equal(pattern: ChaiRecursivePattern): Assertion;
+      equals(pattern: ChaiRecursivePattern): Assertion;
+      eq(pattern: ChaiRecursivePattern): Assertion;
+      eql(pattern: ChaiRecursivePattern): Assertion;
+      eqls(pattern: ChaiRecursivePattern): Assertion;
       include: RecursiveInclude;
       includes: RecursiveInclude;
       have: RecursiveHave;
@@ -26,12 +26,23 @@ declare global {
   }
 }
 
-export type ChaiMathSinglePattern = {
-  [key: string | number | symbol]: ChaiMatchPatternVal | ChaiMatchPatternVal[] | ChaiMathFn;
+export type ChaiRecursiveSinglePattern = {
+  [key: string | number | symbol]:
+    | ChaiRecursivePatternVal
+    | ChaiRecursivePatternVal[]
+    | ChaiRecursiveMathFn;
 };
 
-export type ChaiMathPattern = ChaiMathSinglePattern | ChaiMathSinglePattern[];
+export type ChaiRecursivePattern = ChaiRecursiveSinglePattern | ChaiRecursiveSinglePattern[];
 
-export type ChaiMathFn = (to: Chai.Assertion) => Chai.Assertion;
+export type ChaiRecursiveMathFn = (to: Chai.Assertion) => Chai.Assertion;
 
-type ChaiMatchPatternVal = string | number | boolean | symbol | bigint | undefined | null | object;
+type ChaiRecursivePatternVal =
+  | string
+  | number
+  | boolean
+  | symbol
+  | bigint
+  | undefined
+  | null
+  | object;

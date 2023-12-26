@@ -164,6 +164,7 @@ expect([
 
 ## TBD
 
+- 🚧 Show diff in error message
 - 🚧 Support `chai.assert` interface
 - 🚧 Support more array methods (e.g. `to.recursive.have.ordered.members`)
 

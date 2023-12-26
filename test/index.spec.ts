@@ -183,34 +183,67 @@ describe('chai recursive', () => {
       obj2: { key: 'b', value: 'B' },
     };
 
-    it('should include path in the error message', () => {
+    it('should support method chain', () => {
+      expect(value, 'my text')
+        .to.recursive.include({ obj1: to => to.recursive.equal({ key: 'a', value: 'A' }) })
+        .and.recursive.include({ obj2: to => to.recursive.equal({ key: 'b', value: 'B' }) });
+    });
+
+    it('should render error message', () => {
       const act = () => {
-        expect(value).to.recursive.include({
-          obj1: to => to.recursive.equal({ key: 'a', value: to => to.be.a('number') }),
-        });
+        expect({ num: 1 }, 'my text').to.not.recursive.include({ num: to => to.be.gt(0) });
       };
+
+      const expected = /^my text \(at root\): expected .+ to not recursively include the pattern/;
 
       expect(act)
         .to.throw()
-        .recursive.include({ message: to => to.contain('(at root.obj1.value):') });
+        .recursive.include({ message: to => to.match(expected) });
     });
 
-    it('should include custom text in the error message', () => {
+    it('should render error message on a deep path', () => {
       const act = () => {
         expect(value, 'my text').to.recursive.include({
           obj1: to => to.recursive.equal({ key: 'a', value: to => to.be.a('number') }),
         });
       };
 
+      const expected = /^my text \(at root\.obj1\.value\): expected 'A' to be a number/;
+
       expect(act)
         .to.throw()
-        .recursive.include({ message: to => to.contain('my text (at root.obj1.value):') });
+        .recursive.include({ message: to => to.match(expected) });
     });
 
-    it('should support method chain', () => {
-      expect(value, 'my text')
-        .to.recursive.include({ obj1: to => to.recursive.equal({ key: 'a', value: 'A' }) })
-        .and.recursive.include({ obj2: to => to.recursive.equal({ key: 'b', value: 'B' }) });
+    it('should render error message on array equal', () => {
+      const act = () => {
+        expect([value.obj1, value.obj2], 'my text').to.recursive.equal([
+          { key: 'a', value: to => to.be.a('number') },
+          { key: 'b', value: to => to.be.a('number') },
+        ]);
+      };
+
+      const expected = /^my text \(at root\[0].value\): expected 'A' to be a number/;
+
+      expect(act)
+        .to.throw()
+        .recursive.include({ message: to => to.match(expected) });
+    });
+
+    it('should render error message on array have members', () => {
+      const act = () => {
+        expect([value.obj1, value.obj2], 'my text').to.recursive.have.members([
+          { key: 'a', value: to => to.be.a('number') },
+          { key: 'b', value: to => to.be.a('number') },
+        ]);
+      };
+
+      const expected =
+        /^my text \(at root\): expected .+ to contain members that recursively match the pattern/;
+
+      expect(act)
+        .to.throw()
+        .recursive.include({ message: to => to.match(expected) });
     });
   });
 });
