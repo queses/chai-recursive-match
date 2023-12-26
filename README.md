@@ -73,9 +73,6 @@ expect({
   str2: 'hello 2',
   obj1: { key: 'a', value: 'A' },
   obj2: { key: 'b', value: 'B' },
-  empty1: null,
-  empty2: undefined,
-  date1: new Date(0),
   method1() {},
 }).to.recursive.equal({
   num1: 1,
@@ -86,9 +83,6 @@ expect({
   str2: to => to.match(/^hello/),
   obj1: { key: 'a', value: 'A' },
   obj2: to => to.recursive.equal({ key: 'b', value: to => to.be.a('string') }),
-  date1: new Date(0),
-  empty1: null,
-  empty2: undefined,
 });
 ```
 
@@ -118,19 +112,11 @@ expect([
 ]);
 ```
 
-#### Negation:
+#### With negation:
 
 ```ts
 expect({ foo: { bar: 'baz' } }).to.not.recursive.equal({
   foo: to => to.recursive.equal({ bar: to => to.be.a('number') }),
-});
-```
-
-#### Negation:
-
-```ts
-expect([{ foo: { bar: 'baz' } }, { foo: { bar: 'foobar' } }]).to.not.recursive.include({
-  foo: to => to.recursive.equal({ bar: to.match(/^baz/) }),
 });
 ```
 
@@ -160,6 +146,14 @@ expect([
   { id: 2, name: 'Bob' },
   { id: 2, name: 'Carol' },
 ]).to.recursive.include.members([{ name: to => to.contain('A') }, { name: to => to.contain('C') }]);
+```
+
+#### With negation:
+
+```ts
+expect([{ foo: { bar: 'baz' } }, { foo: { bar: 'foobar' } }]).to.not.recursive.include({
+  foo: to => to.recursive.equal({ bar: to.match(/^baz/) }),
+});
 ```
 
 ## TBD
