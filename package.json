@@ -1,6 +1,6 @@
 {
   "name": "chai-recursive-match",
-  "version": "1.4.0",
+  "version": "0.0.0-development",
   "description": "A chai plugin that adds recursive deep equality assertions",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -35,12 +35,19 @@
     "typescript",
     "mocha",
     "chai",
-    "test"
+    "chai-plugin",
+    "plugin",
+    "test",
+    "match",
+    "similar",
+    "includes",
+    "equal",
+    "recursive"
   ],
   "bugs": {
-    "url": "https://github.com/ryansonshine/chai-recursive-match/issues"
+    "url": "https://github.com/queses/chai-recursive-match/issues"
   },
-  "homepage": "https://github.com/ryansonshine/chai-recursive-match#readme",
+  "homepage": "https://github.com/queses/chai-recursive-match#readme",
   "devDependencies": {
     "@ryansonshine/commitizen": "^4.2.8",
     "@ryansonshine/cz-conventional-changelog": "^3.3.4",
@@ -49,6 +56,7 @@
     "@types/node": "^12.20.11",
     "@typescript-eslint/eslint-plugin": "^6.16.0",
     "@typescript-eslint/parser": "^6.16.0",
+    "chai": "^4.3.10",
     "conventional-changelog-conventionalcommits": "^5.0.0",
     "eslint": "^7.25.0",
     "eslint-config-prettier": "^8.3.0",
@@ -114,8 +122,5 @@
       "@semantic-release/npm",
       "@semantic-release/github"
     ]
-  },
-  "dependencies": {
-    "chai": "^4.3.10"
   }
 }
