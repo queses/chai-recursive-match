@@ -86,7 +86,15 @@ expect({
 });
 ```
 
-#### Check if an array has a member
+#### With negation:
+
+```ts
+expect({ foo: { bar: 'baz' } }).to.not.recursive.equal({
+  foo: to => to.recursive.equal({ bar: to => to.be.a('number') }),
+});
+```
+
+#### Check if an array has a member:
 
 This is similar to `recursive.include`, but the value is expected to fully match the pattern:
 
@@ -97,7 +105,7 @@ expect([
 ]).to.recursive.equal({ id: 1, name: to => to.contain('A') });
 ```
 
-#### Check if an array has members
+#### Check if an array has members:
 
 This is similar to `recursive.have()` with several members to be compared:
 
@@ -110,14 +118,6 @@ expect([
   { id: 1, name: to => to.contain('A') },
   { id: 3, name: to => to.contain('C') },
 ]);
-```
-
-#### With negation:
-
-```ts
-expect({ foo: { bar: 'baz' } }).to.not.recursive.equal({
-  foo: to => to.recursive.equal({ bar: to => to.be.a('number') }),
-});
 ```
 
 ### Recursively inclusion
@@ -138,22 +138,29 @@ expect([{ foo: { bar: 'baz' } }, { foo: { bar: 'foobar' } }]).to.recursive.inclu
 });
 ```
 
-#### Check if an array includes members
-
-```ts
-expect([
-  { id: 1, name: 'Alice' },
-  { id: 2, name: 'Bob' },
-  { id: 2, name: 'Carol' },
-]).to.recursive.include.members([{ name: to => to.contain('A') }, { name: to => to.contain('C') }]);
-```
-
 #### With negation:
 
 ```ts
 expect([{ foo: { bar: 'baz' } }, { foo: { bar: 'foobar' } }]).to.not.recursive.include({
   foo: to => to.recursive.equal({ bar: to.match(/^baz/) }),
 });
+```
+
+#### Check if an array includes members:
+
+```ts
+expect([
+  { id: 1, name: 'Alice' },
+  { id: 2, name: 'Bob' },
+  { id: 2, name: 'Carol' },
+]).to.recursive.include.members([
+  {
+    name: to => to.contain('A')
+  },
+  {
+    name: to => to.contain('C')
+  }
+]);
 ```
 
 ## TBD
